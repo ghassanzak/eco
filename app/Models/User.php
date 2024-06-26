@@ -3,12 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject , MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -48,6 +50,7 @@ class User extends Authenticatable implements JWTSubject
         'photo',
         'status',
         'is_admin',
+        'remember_token',
 
     ];
 
@@ -58,7 +61,7 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        // 'remember_token',
     ];
 
     /**
@@ -87,5 +90,14 @@ class User extends Authenticatable implements JWTSubject
     public function is_admin()
     {
         return $this->is_admin == 1 ? true : false;
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
     }
 }

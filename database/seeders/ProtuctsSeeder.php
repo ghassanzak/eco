@@ -39,19 +39,19 @@ class ProtuctsSeeder extends Seeder
 
 
             $product[] = [
-                'name'         => $product_name,
-                'slug'          => Str::slug($product_name),
-                'description'   => $faker->paragraph(),
+                'name'                  => $product_name,
+                'slug'                  => Str::slug($product_name),
+                'description'           => $faker->paragraph(),
                 'current_purchase_cost' =>$sal_cost,
-                 'current_sale_price' =>$sal_price,
-                 'available_quantity' => rand(0, 50),
-                'status'        => rand(0, 1),
-                'is_popular'  => rand(0, 1),
-                'is_trending'  => rand(0, 1),
-                'user_id'       => $user->random(),
-                'category_id'   => $categories->random(),
-                'created_at'    => $product_date,
-                'updated_at'    => $product_date,
+                'current_sale_price'    =>$sal_price,
+                'available_quantity'    => rand(0, 50),
+                'status'                => rand(0, 1),
+                'is_popular'            => rand(0, 1),
+                'is_trending'           => rand(0, 1),
+                'user_id'               => $user->random(),
+                'category_id'           => $categories->random(),
+                'created_at'            => $product_date,
+                'updated_at'            => $product_date,
 
             ];
         }

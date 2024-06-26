@@ -25,29 +25,27 @@ class UsersSeeder extends Seeder
             'status' => 1,
             'is_admin' => 1,
         ]);
-        User::create([
-            'first_name' => 'user',
-            'last_name' => 'user',
-            'phone_one' => '+963999999999',        
-            'phone_two' => '+963999999991',
-            'email'=>'user@gmail.com',
-            'address'=> 'Dama',
-            'password'=>Hash::make('123456789'),
-            'status' => 1,
-            'is_admin' => 0,
-        ]);
-        User::create([
-            'first_name' => 'user2',
-            'last_name' => 'user2',
-            'phone_one' => '+963999999999',        
-            'phone_two' => '+963999999991',
-            'email'=>'user2@gmail.com',
-            'address'=> 'Dama',
-            'password'=>Hash::make('123456789'),
-            'status' => 1,
-            'is_admin' => 0,
-        ]);
+        $users = [];
+        for ($i=1; $i < 20; $i++) { 
+            
+            $users[] = [
+                'first_name' => 'user'.$i,
+                'last_name' => 'user'.$i,
+                'phone_one' => '+9639999999'.$i,  
+                'phone_two' => '+9639999999'.$i,
+                'email'=>'user'.$i.'@gmail.com',
+                'address'=> 'Dama',
+                'password'=>Hash::make('123456789'),
+                'status' => rand(0,1),
+                'is_admin' => 0,
+            ];
 
+        }
+
+        $chunks = array_chunk($users, 20);
+        foreach ($chunks as $chunk) {
+            User::insert($chunk);
+        }
 
     }
 }

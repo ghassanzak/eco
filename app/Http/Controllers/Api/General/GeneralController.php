@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\General;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\General\CategoryResource;
 use App\Http\Resources\General\ProductResource;
+use App\Http\Resources\General\ReviewResource;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class GeneralController extends Controller
         $product = Product::whereHas('category', function($query){
             $query->whereStatus(1);
         })
-        ->active()->orderBy('id', 'desc')->paginate(5);
+        ->active()->orderBy('id', 'asc')->paginate(5);
         if($product->count() > 0){
             return ProductResource::collection($product);
         } else {
@@ -70,23 +71,23 @@ class GeneralController extends Controller
 
     public function show_review_product($slug, $id)
     {
-        $product = Product::with(['category', 'images_product',
+        $product = Product::with(['category',
             'reviews' => function($query) {
                 $query->active()->orderBy('id', 'desc');
             }
         ]);
 
         $product = $product->whereHas('category', function ($query) {
-                $query->active();
-            });
+            $query->active();
+        });
 
         $product = $product->whereSlug($slug);
         $product = $product->active()->first();
 
         if($product->count() > 0) {
-            return new ProductResource($product);
+            return ReviewResource::collection($product->reviews);
         } else {
-            return response()->json(['error' => true, 'message'=> 'No product Found'], 201);
+            return response()->json(['error' => true, 'message'=> 'No reviews Found'], 201);
         }
     }
 

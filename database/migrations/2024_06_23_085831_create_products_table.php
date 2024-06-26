@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->bigInteger('category_id');
             $table->bigInteger('user_id');
             $table->string('code')->nullable();
             $table->string('brand')->nullable();
@@ -26,6 +25,9 @@ return new class extends Migration
             $table->tinyInteger('is_popular')->nullable()->comment('0=no,1=yes');
             $table->tinyInteger('is_trending')->nullable()->comment('0=no,1=yes');
             $table->tinyInteger('status')->default(1)->comment('0=inactive,1=active');
+
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            
             $table->timestamps();
         });
     }

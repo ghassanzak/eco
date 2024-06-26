@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('product_reviews', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
-            $table->bigInteger('product_id');
             $table->text('product_review_details');
             $table->string('ip_address')->nullable();
             $table->tinyInteger('status')->comment('0=inactive,1=active')->default(1);
+
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+
             $table->timestamps();
         });
     }

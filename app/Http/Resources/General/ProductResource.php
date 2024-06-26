@@ -14,6 +14,8 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $reviewResource = ReviewResource::collection($this->reviews);
+        $reviewCount = count($reviewResource);
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -29,7 +31,8 @@ class ProductResource extends JsonResource
             'is_popular' =>  $this->is_popular,
             'is_trending' => $this->is_trending,
             'status' =>  $this->status(),
-            'reviews' => ReviewResource::collection($this->reviews),
+            'reviews' => $reviewResource,
+            'reviews_count' => $reviewCount,
         ];
     }
 }

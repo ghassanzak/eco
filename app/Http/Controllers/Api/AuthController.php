@@ -4,14 +4,22 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Image;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL; 
+use Illuminate\Support\Carbon;
+use Mail;
 
 class AuthController extends Controller
 {
+
     function login(Request $request) {
 
         $validator = Validator::make($request->all(),[
@@ -111,6 +119,7 @@ class AuthController extends Controller
         
 
         $token = auth('api')->login($user);
+
         if (!$token) {
             return response()->json(['error'=> true, 'message' => 'Unauthorized'],200);
         }
@@ -119,21 +128,5 @@ class AuthController extends Controller
             'expire_in' =>auth('api')->factory()->getTTL()*3600,
         ]);
     }
-
-    public function changePassword(Request $request){
-
-        $hasPass=  Hash::make($request->newPass);
-        $checkCurrentPass=Hash::check($request->currentPass, auth('api')->user()->password);
-        if(!$checkCurrentPass){
-            return response()->json(['error'=> true, 'message' => 'The current password is incorrect'],200);
-        }
-        else
-        {
-            User::where('email',auth('api')->user()->email)->update(['password'=>$hasPass]);
-            return response()->json(['error'=> false, 'message' => 'Password Successfully Changed'],200);
-        }
-    }
-
-    
 
 }
