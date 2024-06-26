@@ -82,4 +82,9 @@ class Product extends Model
         return $this->hasMany(Cart::class);
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'products_tags','product_id','tag_id');
+    }
+
 }

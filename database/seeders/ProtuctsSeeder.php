@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Tag;
 use App\Models\User;
 use Faker\Factory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -27,6 +28,7 @@ class ProtuctsSeeder extends Seeder
 
         $product = [];
         $categories = collect(Category::all()->modelKeys());
+        $tags = collect(Tag::all()->modelKeys());
         $user = collect(User::where('id', '>', 2)->get()->modelKeys());
 
         for ($i = 0; $i < 300; $i++) {

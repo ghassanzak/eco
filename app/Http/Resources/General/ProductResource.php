@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\General;
 
+use App\Http\Resources\TagResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -31,6 +32,7 @@ class ProductResource extends JsonResource
             'is_popular' =>  $this->is_popular,
             'is_trending' => $this->is_trending,
             'status' =>  $this->status(),
+            'tags' =>  TagResource::collection($this->tags),
             'reviews' => $reviewResource,
             'reviews_count' => $reviewCount,
         ];
