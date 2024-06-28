@@ -31,7 +31,7 @@ class VerifyController extends Controller
                 $user->remember_token = $data['key'];
                 $user->save();
 
-                return response()->json(['error'=> false, 'message' => 'Mail send successfully','key'=>$data['key']],200);
+                return response()->json(['error'=> false, 'message' => 'Mail send successfully'],200);
 
             } else {
                 return response()->json(['error'=> true, 'message' => 'user is not found!'],200);

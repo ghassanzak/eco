@@ -5,10 +5,12 @@ namespace App\Models;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Product extends Model
 {
     use HasFactory, Sluggable;
+    use SearchableTrait;
 
     protected $fillable = [
         'name',
@@ -36,22 +38,25 @@ class Product extends Model
             ]
         ];
     }
-
-    // protected $searchable = [
-    //     'columns' => [
-    //         'products.name' => 10,
-    //         'products.description' => 10,
+    protected $searchable = [
+        'columns' => [
+            'products.name' => 10,
+            'products.description' => 10,
             
-    //     ],
-    //     // 'joins' => [
-    //     //     'products' => ['products.id','products.user_id'],
-    //     // ],
-    // ];
+        ],
+        // 'joins' => [
+        //     'products' => ['products.id','products.user_id'],
+        // ],
+    ];
 
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function images_product()

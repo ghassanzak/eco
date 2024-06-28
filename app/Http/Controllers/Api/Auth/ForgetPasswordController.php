@@ -38,7 +38,7 @@ class ForgetPasswordController extends Controller
                         ]
                     );
 
-                    return response()->json(['error'=> false, 'message' => 'Mail send successfully','key'=>$data['key']],200);
+                    return response()->json(['error'=> false, 'message' => 'Mail send successfully'],200);
 
                 }
 

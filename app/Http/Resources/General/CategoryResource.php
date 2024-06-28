@@ -21,6 +21,7 @@ class CategoryResource extends JsonResource
             'note' => $this->note,
             'status' => $this->status(),
             'is_popular' => $this->is_popular(),
+            'count_product' => $this->products->count(),
         ];
     }
 }

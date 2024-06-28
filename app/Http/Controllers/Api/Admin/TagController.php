@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TagResource;
@@ -42,7 +42,7 @@ class TagController extends Controller
     {
 
         $validator = Validator::make($request->all(), ['name' => 'required',]);
-        if($validator->fails()) {return redirect()->back()->withErrors($validator)->withInput();}
+        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
         $data['name'] = $request->name;
         $tag = Tag::create($data);
         if ($tag ) {
@@ -54,13 +54,13 @@ class TagController extends Controller
 
     public function show(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'id'                    => 'required|numeric',
+        ]);
+        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
+
         $tag = Tag::where('id',$request->id)->first();
-        if ($tag) {
-            return new TagResource($tag);
-        } else {
-            return response()->json(['error'=> true, 'message' => 'Tag not found'],200);
-        }
-        
+        return new TagResource($tag);
     }
 
     public function edit($id)
@@ -70,9 +70,11 @@ class TagController extends Controller
 
     public function update(Request $request)
     {
-
-        $validator = Validator::make($request->all(), ['name'=> 'required',]);
-        if($validator->fails()) {return redirect()->back()->withErrors($validator)->withInput();}
+        $validator = Validator::make($request->all(), [
+            'id'                    => 'required|numeric',
+            'name'=> 'required',
+        ]);
+        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
 
         $tag = Tag::where('id',$request->id)->first();
 
@@ -91,7 +93,11 @@ class TagController extends Controller
 
     public function destroy(Request $request)
     {
-        
+        $validator = Validator::make($request->all(), [
+            'id'                    => 'required|numeric',
+        ]);
+        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
+
         $tag = Tag::whereId($request->id)->first();
         if ($tag) {
             $tag->delete();

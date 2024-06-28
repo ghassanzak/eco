@@ -100,4 +100,13 @@ class User extends Authenticatable implements JWTSubject , MustVerifyEmail
     {
         return $this->hasMany(Cart::class);
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
 }

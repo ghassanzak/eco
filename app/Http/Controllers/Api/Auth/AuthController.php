@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\URL; 
 use Illuminate\Support\Carbon;
 use Mail;
+use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
 class AuthController extends Controller
 {
@@ -59,7 +60,7 @@ class AuthController extends Controller
         return response()->json([
             'error'=> false,
             'access_token'=>$token,
-            'expire_in' =>auth('api')->factory()->getTTL()*3600,
+            'expire_in' =>auth('api')->factory()->getTTL()*3600*70,
         ]);
     }
 

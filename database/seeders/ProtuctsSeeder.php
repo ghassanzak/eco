@@ -39,7 +39,6 @@ class ProtuctsSeeder extends Seeder
             $sal_cost = rand(20,500);
             $sal_price = $sal_cost + 10;
 
-
             $product[] = [
                 'name'                  => $product_name,
                 'slug'                  => Str::slug($product_name),
@@ -54,7 +53,6 @@ class ProtuctsSeeder extends Seeder
                 'category_id'           => $categories->random(),
                 'created_at'            => $product_date,
                 'updated_at'            => $product_date,
-
             ];
         }
 
