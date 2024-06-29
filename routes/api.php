@@ -20,14 +20,16 @@ Route::post('forget-password',      [ForgetPasswordController::class, 'forgetPas
 Route::post('reset-password',       [ForgetPasswordController::class, 'resetPasswordLoad']);
 
 Route::group(['middleware' => ['jwt.auth']], function () {
-    
-Route::get('me',                        [AuthController::class, 'me']);
+    Route::get('me',                        [AuthController::class, 'me']);
     Route::post('refresh',                  [AuthController::class, 'refresh']);
     Route::post('logout',                   [ AuthController::class,'logout']);
     Route::post('user/changePassword',      [AuthController::class, 'changePassword']);
 
     Route::post('send-code-mail-verify',    [VerifyController::class, 'sendCodeMail']);
     Route::post('/verify-mail',             [VerifyController::class, 'verificationMail']);
+});
+
+Route::group(['middleware' => ['jwt.auth','is.admin']], function () {
 
 Route::post('/user/tag/index',     [TagController::class,'index']);
     Route::post('/user/tag/store',     [TagController::class,'store']);
@@ -61,7 +63,3 @@ Route::get('/product',                          [GeneralController::class,'show_
 Route::get('/all_category',                     [GeneralController::class,'get_category']);
 Route::get('/category/{slug}',                  [GeneralController::class,'show_category']);
 Route::get('/product/{slug}/review/{id}',       [GeneralController::class,'show_review_product']);
-
-
-
-

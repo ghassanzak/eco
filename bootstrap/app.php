@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\IsAdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'jwt.auth' => Tymon\JWTAuth\Http\Middleware\Authenticate::class,
             'jwt.refresh' => Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
+            'is.admin' => IsAdminMiddleware::class,
         ]);
         
     })
