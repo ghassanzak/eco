@@ -17,7 +17,7 @@ use Mail;
 class VerifyController extends Controller
 {
     
-    public function sendCodeMail(Request $request) {
+    public function sendCodeMail() {
         if (auth()->user()) {
             $user = User::where('email',auth()->user()->email)->first();
             if ($user) {
@@ -26,21 +26,15 @@ class VerifyController extends Controller
                 $data['title'] = "Email Verification";
                 $data['body'] = "Pleade click here to below to verify your mail";
                 $user->notify(new sendCodeNotification($data));
-
-               
                 $user->remember_token = $data['key'];
                 $user->save();
-
                 return response()->json(['error'=> false, 'message' => 'Mail send successfully'],200);
-
             } else {
                 return response()->json(['error'=> true, 'message' => 'user is not found!'],200);
             }
-            
         } else {
             return response()->json(['error'=> true, 'message' => 'user is not Authentication'],200);
         }
-        
     }
 
     function verificationMail(Request $request) {

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\CategoryUpRequest;
+use App\Http\Requests\IdRequest;
 use App\Http\Resources\General\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -16,26 +19,14 @@ class CategoryController extends Controller
         return  CategoryResource::collection($category);
     }
 
-    public function show(Request $request)
+    public function show(IdRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'id'                    => 'required|numeric',
-        ]);
-        
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
         $category = Category::where('id',$request->id)->get();
         return CategoryResource::collection($category);
     }
 
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name'                  => 'required|string',
-            'status'                => 'nullable|numeric|min:0|max:1',
-            'note'                  => 'nullable|min:20|string',
-            'image'                 => 'nullable|mimes:jpg,jpeg,png,gif',
-        ]);
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
 
         $category = new Category();
         $category->name = $request->name;
@@ -52,18 +43,8 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(Request $request)
+    public function update(CategoryUpRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'id'                    => 'required|numeric',
-            'name'                  => 'required|string',
-            'status'                => 'nullable|numeric|min:0|max:1',
-            'is_popular'            => 'nullable|numeric|min:0|max:1',
-            'note'                  => 'nullable|min:20|string',
-            'image'                 => 'nullable|mimes:jpg,jpeg,png,gif',
-        ]);
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
-        
         $category = Category::find($request->id);
         $category->name     = $request->name;
         $category->status   = $request->status;
@@ -78,19 +59,11 @@ class CategoryController extends Controller
         return response()->json(['error'=> false, 'message' => 'Category Successfully Updated']);
 
     }
-    public function destroy(Request $request){
-
-        $validator = Validator::make($request->all(), [
-            'id'                    => 'required|numeric',
-        ]);
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
-
+    public function destroy(IdRequest $request){
         $category = Category::find($request->id);
-
         if (file_exists($category->image)) {
             unlink($category->image);
         }
-
         $category->delete();
         return response()->json(['error'=> false, 'message' => 'category Successfully Deleted']);
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->bigInteger('user_id');
+            // $table->bigInteger('user_id');
             $table->string('code')->nullable();
             $table->string('brand')->nullable();
             $table->decimal('current_purchase_cost', 11, 3);
@@ -26,8 +26,8 @@ return new class extends Migration
             $table->tinyInteger('is_trending')->nullable()->comment('0=no,1=yes');
             $table->tinyInteger('status')->default(1)->comment('0=inactive,1=active');
 
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            
+            $table->foreignId('user_id')->constrained()->nullOnDelete();
+            $table->foreignId('category_id')->constrained()->nullOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

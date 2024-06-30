@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('name');
             // $table->string('product_id');
 
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             
             $table->timestamps();
         });

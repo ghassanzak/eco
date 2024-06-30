@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ResetPassRequest;
 use App\Models\PasswordResetTokens;
 use App\Models\User;
 use App\Notifications\sendCodeNotification;
@@ -21,10 +22,8 @@ class ForgetPasswordController extends Controller
         try {
             $user = User::whereEmail($request->email)->get();
             if (count($user)>0) {
-
                 $user = User::whereEmail($request->input('email'))->first();
                 if ($user) {
-
                     $data['key'] = rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9).rand(0,9);
                     $data['title'] = "Reset Password";
                     $data['body'] = "Code to re-appoint the password";
@@ -37,33 +36,23 @@ class ForgetPasswordController extends Controller
                             'created_at' => Carbon::now(),
                         ]
                     );
-
                     return response()->json(['error'=> false, 'message' => 'Mail send successfully'],200);
-
                 }
-
             } else {
                 return response()->json(['error'=> true, 'message' => 'user is not found!'],200);
             }
-                
         } catch (Exception $e) {
             return response()->json(['error'=> true, 'message' => $e->getMessage()],200);
         }
     }
 
-    public function resetPasswordLoad(Request $request) {
+    public function resetPasswordLoad(ResetPassRequest $request) {
         $resetData = PasswordResetTokens::where('key',$request->key)->where('email',$request->email)->first();
-        if (isset($request->key) && $resetData ) {
-
-            $validator = Validator::make($request->all(),['password' => 'required|min:6'],);
-            if ($validator->failed()) return response()->json(['error'=> true, 'message' => $validator->errors()],200);
-            
+        if ($request->key != '' && $resetData ) {
             $user = User::where('email',$request->email)->first();
             $user->password = Hash::make($request->input('password'));
             $user->save();
-
             $resetData = PasswordResetTokens::where('key',$request->key)->where('email',$request->email)->delete();
-
             return response()->json(['error'=> false, 'message' => 'Change Password Successfully'],200);
         }else {
             return response()->json(['error'=> true, 'message' => 'Page 404'],404);

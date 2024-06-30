@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePassRequest;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,54 +24,26 @@ use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 class AuthController extends Controller
 {
 
-    function login(Request $request) {
-
-        $validator = Validator::make($request->all(),[
-            'email' => 'required|email',
-            'password' => 'required|min:6'
-            ],
-        );
-        if ($validator->failed()) {
-            return response()->json(['error'=> true, 'message' => $validator->errors()],200);
-        }
-
-
+    function login(LoginRequest $request) {
         $credentials = request(['email','password']);
-
-        
-        
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error'=> true, 'message' => 'Unauthorized'],200);
         }
         return $this->respondWithToken($token);
-        
-        
     }
-
     public function refresh()
     {   
         $tokenOld = JWTAuth::getToken();
-        
         if (!$token = auth('api')->refresh()) {
             JWTAuth::invalidate($tokenOld);
             return response()->json(['error'=> true, 'message' => 'Unauthorized'],200);
         }
-        
         return $this->respondWithToken($token);
     }
-    function respondWithToken($token) {
-        return response()->json([
-            'error'=> false,
-            'access_token'=>$token,
-            'expire_in' =>auth('api')->factory()->getTTL()*3600*70,
-        ]);
-    }
-
     public function me()
     {
         return response()->json(auth('api')->user());
     }
-
     function logout() {
         $tokenOld = JWTAuth::getToken();
         try {
@@ -83,27 +58,7 @@ class AuthController extends Controller
         }
         
     }
-
-    public function register(Request $request){
-
-
-        $validation = Validator::make($request->all(), [
-            'first_name'    =>  'required|string|max:255',
-            'last_name'     =>  'required|string|max:255',
-            'phone_one'     =>  'required|numeric|min:99999|max:9999999999',
-            'phone_two'     =>  'numeric|min:99999|max:9999999999',
-            'email'         =>  'required|string|email|max:255|unique:users,email',
-            'password'      =>  'required|string|min:6',
-            'photo'         =>  'mimes:jpg,png|image',
-            'address'       =>  'string|max:255',
-            // 'photo'         =>  ['required', File::image()->min(1024)->max(12 * 1024)->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),],
-            'status'        =>  'boolean|numeric|min:0|max:1',
-            'is_admin'      =>  'boolean|numeric|min:0|max:1',
-        ]);
-        if($validation->fails()){
-            return response()->json(['errors' => true, 'messages' => $validation->errors()],200);
-        }
-        
+    public function register(RegisterRequest $request){
         $date['first_name']    =  $request->first_name;
         $date['last_name']     =  $request->last_name;
         $date['phone_one']     =  $request->phone_one;
@@ -115,12 +70,11 @@ class AuthController extends Controller
         $date['is_admin']      =  $request->is_admin;
 
         if ($request->photo) {
-            $filename = time().'-'.'.'.$request->photo->getClientOriginalExtension();
+            $filename = $request->first_name . time().'-'.'.'.$request->photo->getClientOriginalExtension();
             $path = public_path('assets/users');
             $request->photo->move($path, $filename);
             $date['photo'] = $filename;
         }
-
         $user = User::create($date);
 
         if (!$token = auth('api')->login($user)) {
@@ -128,22 +82,21 @@ class AuthController extends Controller
         }
         return $this->respondWithToken($token);
     }
-
-    public function changePassword(Request $request){
-
-        $validation = Validator::make($request->all(), ['currentPass'=>'required|string|min:6', 'newPass'=>'required|string|min:6',]);
-        if($validation->fails()){ return response()->json(['errors' => true, 'messages' => $validation->errors()],200);}
-
+    public function changePassword(ChangePassRequest $request){
         $hasPass=  Hash::make($request->newPass);
         $checkCurrentPass=Hash::check($request->currentPass, auth('api')->user()->password);
         if(!$checkCurrentPass){
             return response()->json(['error'=> true, 'message' => 'The current password is incorrect'],200);
         }
-        else
-        {
-            User::where('email',auth('api')->user()->email)->update(['password'=>$hasPass]);
-            return response()->json(['error'=> false, 'message' => 'Password Successfully Changed'],200);
-        }
+        User::where('email',auth('api')->user()->email)->update(['password'=>$hasPass]);
+        return response()->json(['error'=> false, 'message' => 'Password Successfully Changed'],200);
     }
 
+    function respondWithToken($token) {
+        return response()->json([
+            'error'=> false,
+            'access_token'=>$token,
+            'expire_in' =>auth('api')->factory()->getTTL()*3600*70,
+        ]);
+    }
 }

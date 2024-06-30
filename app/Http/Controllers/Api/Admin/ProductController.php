@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IdRequest;
+use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ProductUpRequest;
 use App\Http\Resources\General\CategoryResource;
 use App\Http\Resources\General\ProductResource;
 use App\Http\Resources\TagResource;
@@ -19,20 +22,6 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-
-            'keyword'       => 'nullable|string',
-            'category_id'   => 'nullable|numeric',
-            'tag_id'        => 'nullable|numeric',
-            'status'        => 'nullable|numeric|min:0|max:1',
-            'is_popular'    => 'nullable|numeric|min:0|max:1',
-            'is_trending'   => 'nullable|numeric|min:0|max:1',
-            'sort_by'       => 'nullable|string',
-            'order_by'      => 'nullable|string',
-            'limit_by'      => 'nullable|numeric',
-        ]);
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
-        
         $keyword =      (isset($request->keyword)       && $request->keyword != '')     ? $request->keyword     : null;
         $categoryId =   (isset($request->category_id)   && $request->category_id != '') ? $request->category_id : null;
         $tagId =        (isset($request->tag_id)        && $request->tag_id != '')      ? $request->tag_id      : null;
@@ -44,32 +33,12 @@ class ProductController extends Controller
         $limit_by =     (isset($request->limit_by)      && $request->limit_by != '')    ? $request->limit_by    : '10';
 
         $products = Product::with(['user', 'category', 'reviews']);
-        if ($keyword != null) {
-            $products = $products->search($keyword);
-        }
-
-        if ($categoryId != null) {
-            $products = $products->where('category_id',$categoryId);
-        }
-        
-        if ($tagId != null) {
-            $products = $products->whereHas('tags', function ($query) use ($tagId) {
-                $query->where('id', $tagId);
-            });
-        }
-
-        if ($status != null) {
-            $products = $products->where('status',$status);
-        }
-
-        if ($is_popular != null) {
-            $products = $products->where('is_popular',$is_popular);
-        }
-
-        if ($is_trending != null) {
-            $products = $products->where('is_trending',$is_trending);
-        }
-
+        $products = $keyword != null ??     $products->search($keyword);
+        $products = $categoryId != null ??  $products->where('category_id',$categoryId);
+        $products = $tagId != null ??       $products->whereHas('tags', function ($query) use ($tagId) { $query->where('id', $tagId);});
+        $products = $status != null ??      $products->where('status',$status);
+        $products = $is_popular != null ??  $products->where('is_popular',$is_popular);
+        $products = $is_trending != null ?? $products->where('is_trending',$is_trending);
         $products = $products->orderBy($sort_by, $order_by);
         $products = $products->paginate($limit_by);
 
@@ -85,27 +54,8 @@ class ProductController extends Controller
         return ProductResource::collection($categories);
     }
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-
-            'name'                  => 'required|string',
-            'code'                  => 'nullable|numeric',
-            'brand'                 => 'nullable|string',
-            'current_purchase_cost' => 'required',
-            'current_sale_price'    => 'required',
-            'available_quantity'    => 'required|numeric',
-            'description'           => 'required|min:20|string',
-            'is_popular'            => 'nullable|numeric|min:0|max:1',
-            'is_trending'           => 'nullable|numeric|min:0|max:1',
-            'status'                => 'nullable|numeric|min:0|max:1',
-            'category_id'           => 'required',
-            'images.*'              => 'nullable|mimes:jpg,jpeg,png,gif',
-            'tags.*'                => 'required',
-
-        ]);
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
-
         $data['name']                   = $request->name;
         $data['current_purchase_cost']  = $request->current_purchase_cost;
         $data['current_sale_price']     = $request->current_sale_price;
@@ -155,12 +105,11 @@ class ProductController extends Controller
         }
     }
 
-    public function show(Request $request)
+    public function show(IdRequest $request)
     {
         $product = Product::with(['images_product', 'category', 'user', 'reviews'])->where('id',$request->id)->first();
         return new ProductResource($product);
     }
-
     public function edit($id)
     {
         $tags = Tag::pluck( 'id','name');
@@ -171,30 +120,8 @@ class ProductController extends Controller
         CategoryResource::collection($categories);
         return ProductResource::collection($product);
     }
-
-    public function update(Request $request)
+    public function update(ProductUpRequest $request)
     {
-
-        $validator = Validator::make($request->all(), [
-
-            'id'                  => 'required|numeric',
-            'name'                  => 'nullable|string',
-            'code'                  => 'nullable|numeric',
-            'brand'                 => 'nullable|string',
-            'current_purchase_cost' => 'nullable',
-            'current_sale_price'    => 'nullable',
-            'available_quantity'    => 'nullable|numeric',
-            'description'           => 'nullable|min:20|string',
-            'is_popular'            => 'nullable|numeric|min:0|max:1',
-            'is_trending'           => 'nullable|numeric|min:0|max:1',
-            'status'                => 'nullable|numeric|min:0|max:1',
-            'category_id'           => 'nullable',
-            'images.*'              => 'nullable|mimes:jpg,jpeg,png,gif',
-            'tags.*'                => 'nullable',
-
-        ]);
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
-
         $product = Product::where('id',$request->id)->first();
 
         if ($product) {
@@ -260,7 +187,7 @@ class ProductController extends Controller
         
     }
 
-    public function destroy(Request $request)
+    public function destroy(IdRequest $request)
     {
         $product = Product::where('id',$request->id)->first();
         // return response()->json(['message' => public_path($product->images_product[0]->name)],200);
@@ -281,7 +208,7 @@ class ProductController extends Controller
         return response()->json(['error'=> true, 'message' => 'Something was wrong'],200);
     }
 
-    public function removeImage(Request $request)
+    public function removeImage(IdRequest $request)
     {
 
         $media = ProductImage::where('id',$request->id)->first();

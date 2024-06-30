@@ -29,7 +29,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('/verify-mail',             [VerifyController::class, 'verificationMail']);
 });
 
-Route::group(['middleware' => ['jwt.auth','is.admin']], function () {
+Route::group(['middleware' => ['jwt.auth']], function () {
 
 Route::post('/user/tag/index',     [TagController::class,'index']);
     Route::post('/user/tag/store',     [TagController::class,'store']);

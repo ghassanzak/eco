@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TagRequest;
 use App\Http\Resources\TagResource;
 use App\Models\Tag;
 use Exception;
@@ -38,11 +39,10 @@ class TagController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(TagRequest $request)
     {
 
-        $validator = Validator::make($request->all(), ['name' => 'required',]);
-        if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
+        
         $data['name'] = $request->name;
         $tag = Tag::create($data);
         if ($tag ) {
@@ -68,11 +68,10 @@ class TagController extends Controller
         //
     }
 
-    public function update(Request $request)
+    public function update(TagRequest $request)
     {
         $validator = Validator::make($request->all(), [
             'id'                    => 'required|numeric',
-            'name'=> 'required',
         ]);
         if($validator->fails()) {return response()->json(['errors' => true, 'messages' => $validator->errors()]);}
 
