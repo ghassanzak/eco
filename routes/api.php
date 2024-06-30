@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Admin\CategoryController;
 use App\Http\Controllers\Api\Admin\ProductController;
+use App\Http\Controllers\Api\Admin\ProductSoftdeleteController;
 use App\Http\Controllers\Api\Admin\ReviewController;
 use App\Http\Controllers\Api\Admin\TagController;
 use App\Http\Controllers\Api\Auth\AuthController;
@@ -49,6 +50,11 @@ Route::post('/user/product/index',          [ProductController::class,'index']);
     Route::post('/user/product/update',         [ProductController::class,'update']);
     Route::post('/user/product/destroy',        [ProductController::class,'destroy']);
     Route::post('/user/product/remove-image',   [ProductController::class,'removeImage']);
+
+Route::post('/user/archive/product/index',      [ProductSoftdeleteController::class,'index']);
+    Route::post('/user/archive/product/show',   [ProductSoftdeleteController::class,'show']);
+    Route::post('/user/archive/product/restore',[ProductSoftdeleteController::class,'restore']);
+    Route::post('/user/archive/product/delete', [ProductSoftdeleteController::class,'delete']);
 
 Route::post('/user/review/index',          [ReviewController::class,'index']);
     Route::post('/user/review/store',          [ReviewController::class,'store']);

@@ -5,12 +5,14 @@ namespace App\Models;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Product extends Model
 {
     use HasFactory, Sluggable;
     use SearchableTrait;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',

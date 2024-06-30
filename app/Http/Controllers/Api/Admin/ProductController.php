@@ -33,12 +33,12 @@ class ProductController extends Controller
         $limit_by =     (isset($request->limit_by)      && $request->limit_by != '')    ? $request->limit_by    : '10';
 
         $products = Product::with(['user', 'category', 'reviews']);
-        $products = $keyword != null ??     $products->search($keyword);
-        $products = $categoryId != null ??  $products->where('category_id',$categoryId);
-        $products = $tagId != null ??       $products->whereHas('tags', function ($query) use ($tagId) { $query->where('id', $tagId);});
-        $products = $status != null ??      $products->where('status',$status);
-        $products = $is_popular != null ??  $products->where('is_popular',$is_popular);
-        $products = $is_trending != null ?? $products->where('is_trending',$is_trending);
+        if($keyword != null )       $products = $products->search($keyword);
+        if($categoryId != null )    $products = $products->where('category_id',$categoryId);
+        if($tagId != null )         $products = $products->whereHas('tags', function ($query) use ($tagId) { $query->where('id', $tagId);});
+        if($status != null )        $products = $products->where('status',$status);
+        if($is_popular != null )    $products = $products->where('is_popular',$is_popular);
+        if($is_trending != null )   $products = $products->where('is_trending',$is_trending);
         $products = $products->orderBy($sort_by, $order_by);
         $products = $products->paginate($limit_by);
 
@@ -192,14 +192,14 @@ class ProductController extends Controller
         $product = Product::where('id',$request->id)->first();
         // return response()->json(['message' => public_path($product->images_product[0]->name)],200);
         if ($product) {
-            if ($product->images_product->count() > 0) {
+            // if ($product->images_product->count() > 0) {
                 
-                foreach ($product->images_product as $image) {
-                    if (file_exists(public_path($image->name) )) {
-                        unlink(public_path($image->name));
-                    }
-                }
-            }
+            //     foreach ($product->images_product as $image) {
+            //         if (file_exists(public_path($image->name) )) {
+            //             unlink(public_path($image->name));
+            //         }
+            //     }
+            // }
             $product->delete();
 
             return response()->json(['error'=> false, 'message' => 'Product deleted successfully'],200);
