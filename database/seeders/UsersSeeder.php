@@ -26,7 +26,7 @@ class UsersSeeder extends Seeder
             'is_admin' => 1,
         ]);
         $users = [];
-        for ($i=1; $i < 20; $i++) { 
+        for ($i=1; $i < 4; $i++) { 
             
             $users[] = [
                 'first_name' => 'user'.$i,
@@ -42,7 +42,7 @@ class UsersSeeder extends Seeder
 
         }
 
-        $chunks = array_chunk($users, 20);
+        $chunks = array_chunk($users, 4);
         foreach ($chunks as $chunk) {
             User::insert($chunk);
         }

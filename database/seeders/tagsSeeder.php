@@ -24,6 +24,8 @@ class tagsSeeder extends Seeder
         Tag::create(['name' => 'Food']);
         Tag::create(['name' => 'Travel']);
 
+        Tag::factory()->count(2000)->create();
+
 
         for ($i=1; $i <= 250; $i++) { 
             for ($j=1; $j <= rand(1,5); $j++) { 
@@ -34,7 +36,6 @@ class tagsSeeder extends Seeder
                 ];
             }
         }
-        
 
         $chunks = array_chunk($product_tag, 500);
         foreach ($chunks as $chunk) {
