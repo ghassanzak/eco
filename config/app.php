@@ -15,6 +15,10 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'file_users' => env('APP_FILE_USERS', 'assets/users/'),
+    'file_products' => env('APP_FILE_PRODUCTS', 'assets/products/'),
+    'file_category' => env('APP_FILE_CATEGORY', 'assets/category/'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

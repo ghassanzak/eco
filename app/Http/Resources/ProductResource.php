@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\General;
+namespace App\Http\Resources;
 
 use App\Http\Resources\TagResource;
 use Illuminate\Http\Request;

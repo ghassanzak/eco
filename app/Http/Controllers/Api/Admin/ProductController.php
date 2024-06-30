@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\IdRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ProductUpRequest;
-use App\Http\Resources\General\CategoryResource;
-use App\Http\Resources\General\ProductResource;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\TagResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Tag;
+use App\Providers\AppServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Stevebauman\Purify\Facades\Purify;
@@ -20,6 +21,7 @@ use Stevebauman\Purify\Facades\Purify;
 
 class ProductController extends Controller
 {
+    public string $file_media = "assets/products/";
     public function index(Request $request)
     {
         $keyword =      (isset($request->keyword)       && $request->keyword != '')     ? $request->keyword     : null;
@@ -82,10 +84,12 @@ class ProductController extends Controller
         $product = auth()->user()->products()->create($data);
 
         if ($request->images && count($request->images) > 0) {
-            $this->Image($product,$request->images);
+            foreach ($request->images as $key => $image) {
+                $product->images_product()->create(['name'=>$this->Image($image,$this->file_media)]);
+            }
         }
 
-        if (count($request->tags) > 0) {
+        if (isset($request->tags) && count($request->tags) > 0) {
             $new_tags = [];
             foreach ($request->tags as $tag) {
                 $tag = Tag::firstOrCreate([
@@ -98,7 +102,7 @@ class ProductController extends Controller
             }
             $product->tags()->sync($new_tags);
         }
-        if ($product ) {
+        if ($product) {
             return response()->json(['error'=> false, 'message' => 'Product created successfully'],200);
         } else {
             return response()->json(['error'=> true, 'message' => 'worning'],200);
@@ -163,7 +167,9 @@ class ProductController extends Controller
             $product->update($data);
 
             if ($request->images && count($request->images) > 0) {
-                $this->Image($product,$request->images);
+                foreach ($request->images as $key => $image) {
+                    $product->images_product()->create(['name'=>$this->Image($image,$this->file_media)]);
+                }
             }
 
             if (isset($request->tags)&&count($request->tags) > 0) {
@@ -220,24 +226,5 @@ class ProductController extends Controller
             return true;
         }
         return false;
-    }
-
-    public function Image(Product $product,$images)
-    {
-        if (isset($images) && count($images) > 0) {
-            if (!file_exists('assets/products/')) {mkdir('assets/products/', 666, true);}
-            $i = 1;
-            foreach ($images as $image) {
-                if ( $image && ($image != '') && ($image != null)) {
-                    $filename = $product->slug . time() . $i . rand(1000, 9999) . '.' .$image->getClientOriginalExtension();
-                    $path = public_path('assets/products/');
-                    $db_media_img_path = 'assets/products/' . $filename;
-
-                    $ima = $product->images_product()->create(['name'=>$db_media_img_path]);
-                    $image->move($path, $filename);
-                    $i++;
-                }
-            }
-        }
     }
 }

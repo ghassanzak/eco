@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\General;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\General\CategoryResource;
-use App\Http\Resources\General\ProductResource;
-use App\Http\Resources\General\ReviewResource;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ReviewResource;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -90,6 +90,4 @@ class GeneralController extends Controller
             return response()->json(['error' => true, 'message'=> 'No reviews Found'], 201);
         }
     }
-
-
 }

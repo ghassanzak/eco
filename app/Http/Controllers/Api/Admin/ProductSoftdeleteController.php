@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IdRequest;
-use App\Http\Resources\General\ProductResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -61,9 +61,7 @@ class ProductSoftdeleteController extends Controller
             if ($product->images_product->count() > 0) {
                 
                 foreach ($product->images_product as $image) {
-                    if (file_exists(public_path($image->name) )) {
-                        unlink(public_path($image->name));
-                    }
+                    $this->removeImage($image->name);
                 }
             }
             $product->forceDelete();

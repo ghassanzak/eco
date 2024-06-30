@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\CategoryUpRequest;
 use App\Http\Requests\IdRequest;
-use App\Http\Resources\General\CategoryResource;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+    public string $file_media = "assets/category/";
+
     public function index()
     {
         $category = Category::get();
@@ -33,7 +35,7 @@ class CategoryController extends Controller
         $category->status = $request->status;
         $category->note = $request->note;
         if ($request->image) {
-            $category->image = $this->Icon($request->file('image'));
+            $category->image = $this->Image($request->file('image'),$this->file_media);
         }
         $category->save();
         if ($category ) {
@@ -50,14 +52,14 @@ class CategoryController extends Controller
         $category->status   = $request->status;
         $category->note     = $request->note;
         if($request->updateImage){
-            $category->image = $this->Icon($request->updateImage,$request->id);
+            $this->removeImage($category->image);
+            $category->image =  $this->Image($request->file('updateImage'),$this->file_media);
         }
         if($request->is_popular){
             $category->is_popular = $request->is_popular;
         }
         $category->save();
         return response()->json(['error'=> false, 'message' => 'Category Successfully Updated']);
-
     }
     public function destroy(IdRequest $request){
         $category = Category::find($request->id);
@@ -66,30 +68,5 @@ class CategoryController extends Controller
         }
         $category->delete();
         return response()->json(['error'=> false, 'message' => 'category Successfully Deleted']);
-    }
-
-
-    public function Icon($image,$id=null)
-    {
-        if (isset($image) && ($image != '') && ($image != null)) {
-            // $ext = explode('/', mime_content_type($image))[1];
-            // $filename = "category_icons-" . time() . rand(1000, 9999) . '.' . $ext;
-            $filename = "category_icons-" . time().'-'.'.'.$image->getClientOriginalExtension();
-            $path = public_path('assets/category/');
-            $db_media_img_path = 'assets/category/' . $filename;
-            
-            if (!file_exists($path)) {
-                mkdir($path, 666, true);
-            }
-            if ($id != null) {
-                $imageOld = Category::find($id)->image;
-                if($imageOld)
-                if (file_exists($imageOld)) {
-                    unlink($imageOld);
-                }
-            }
-            $image->move($path, $filename);
-            return isset($db_media_img_path)?$db_media_img_path:null;
-        }
     }
 }

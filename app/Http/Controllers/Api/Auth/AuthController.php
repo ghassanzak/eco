@@ -12,17 +12,13 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Intervention\Image\Image;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\URL; 
-use Illuminate\Support\Carbon;
-use Mail;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
 class AuthController extends Controller
 {
+
+    public string $file_media = "assets/users/";
 
     function login(LoginRequest $request) {
         $credentials = request(['email','password']);
@@ -70,10 +66,7 @@ class AuthController extends Controller
         $date['is_admin']      =  $request->is_admin;
 
         if ($request->photo) {
-            $filename = $request->first_name . time().'-'.'.'.$request->photo->getClientOriginalExtension();
-            $path = public_path('assets/users');
-            $request->photo->move($path, $filename);
-            $date['photo'] = $filename;
+            $date['photo'] = $this->Image($request->file('image'),$this->file_media);
         }
         $user = User::create($date);
 
