@@ -28,7 +28,7 @@ trait MyClass
     public function createOrExistFile($path) {
         if (!file_exists($path)) {mkdir($path, 666, true);}
     }
-    public function removeImage(string $image) {
-        if($image) if(file_exists($image)) unlink($image);
+    public function removeImage(string $image = null) {
+        if($image && $image != null) if(file_exists($image)) unlink($image);
     }
 }

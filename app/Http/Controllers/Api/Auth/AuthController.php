@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ChangePassRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UpdateInfoRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -65,7 +66,7 @@ class AuthController extends Controller
         $date['status']        =  $request->status;
         $date['is_admin']      =  $request->is_admin;
 
-        if ($request->photo) {
+        if (isset($request->photo)) {
             $date['photo'] = $this->Image($request->file('image'),$this->file_media);
         }
         $user = User::create($date);
@@ -75,16 +76,7 @@ class AuthController extends Controller
         }
         return $this->respondWithToken($token);
     }
-    public function changePassword(ChangePassRequest $request){
-        $hasPass=  Hash::make($request->newPass);
-        $checkCurrentPass=Hash::check($request->currentPass, auth('api')->user()->password);
-        if(!$checkCurrentPass){
-            return response()->json(['error'=> true, 'message' => 'The current password is incorrect'],200);
-        }
-        User::where('email',auth('api')->user()->email)->update(['password'=>$hasPass]);
-        return response()->json(['error'=> false, 'message' => 'Password Successfully Changed'],200);
-    }
-
+    
     function respondWithToken($token) {
         return response()->json([
             'error'=> false,
@@ -92,4 +84,5 @@ class AuthController extends Controller
             'expire_in' =>auth('api')->factory()->getTTL()*3600*70,
         ]);
     }
+
 }

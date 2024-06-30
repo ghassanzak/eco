@@ -196,32 +196,18 @@ class ProductController extends Controller
     public function destroy(IdRequest $request)
     {
         $product = Product::where('id',$request->id)->first();
-        // return response()->json(['message' => public_path($product->images_product[0]->name)],200);
         if ($product) {
-            // if ($product->images_product->count() > 0) {
-                
-            //     foreach ($product->images_product as $image) {
-            //         if (file_exists(public_path($image->name) )) {
-            //             unlink(public_path($image->name));
-            //         }
-            //     }
-            // }
             $product->delete();
-
             return response()->json(['error'=> false, 'message' => 'Product deleted successfully'],200);
         }
-
         return response()->json(['error'=> true, 'message' => 'Something was wrong'],200);
     }
 
-    public function removeImage(IdRequest $request)
+    public function removeImageForProduct(IdRequest $request)
     {
-
         $media = ProductImage::where('id',$request->id)->first();
         if ($media) {
-            if (file_exists(public_path($media->name))) {
-                unlink(public_path($media->name));
-            }
+            $this->removeImage($media->name);
             $media->delete();
             return true;
         }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdminController;
 use App\Http\Controllers\Api\Admin\CategoryController;
 use App\Http\Controllers\Api\Admin\ProductController;
 use App\Http\Controllers\Api\Admin\ProductSoftdeleteController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\ForgetPasswordController;
 use App\Http\Controllers\Api\Auth\VerifyController;
 use App\Http\Controllers\Api\General\GeneralController;
+use App\Http\Controllers\Api\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,11 +25,15 @@ Route::post('reset-password',       [ForgetPasswordController::class, 'resetPass
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('me',                        [AuthController::class, 'me']);
     Route::post('refresh',                  [AuthController::class, 'refresh']);
-    Route::post('logout',                   [ AuthController::class,'logout']);
-    Route::post('user/changePassword',      [AuthController::class, 'changePassword']);
+    Route::post('logout',                   [AuthController::class,'logout']);
+    Route::post('user/updateProfile',       [UserController::class,'updateProfile']);
+    Route::post('user/changePassword',      [UserController::class, 'changePassword']);
 
     Route::post('send-code-mail-verify',    [VerifyController::class, 'sendCodeMail']);
     Route::post('/verify-mail',             [VerifyController::class, 'verificationMail']);
+
+    Route::post('user/update-user',         [AdminController::class, 'updateUser']);
+    Route::post('user/delete-user',         [AdminController::class, 'deleteUser']);
 });
 
 Route::group(['middleware' => ['jwt.auth']], function () {
@@ -49,7 +55,7 @@ Route::post('/user/product/index',          [ProductController::class,'index']);
     Route::post('/user/product/show',           [ProductController::class,'show']);
     Route::post('/user/product/update',         [ProductController::class,'update']);
     Route::post('/user/product/destroy',        [ProductController::class,'destroy']);
-    Route::post('/user/product/remove-image',   [ProductController::class,'removeImage']);
+    Route::post('/user/product/remove-image',   [ProductController::class,'removeImageForProduct']);
 
 Route::post('/user/archive/product/index',      [ProductSoftdeleteController::class,'index']);
     Route::post('/user/archive/product/show',   [ProductSoftdeleteController::class,'show']);

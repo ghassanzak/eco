@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateInfoRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,6 +22,7 @@ class UpdateInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id'            =>  'required|string|max:255',
             'first_name'    =>  'string|max:255',
             'last_name'     =>  'string|max:255',
             'phone_one'     =>  'numeric|min:99999|max:999999999999999',
@@ -31,7 +32,6 @@ class UpdateInfoRequest extends FormRequest
             'email'         =>  'string|email|max:255|unique:users,email',
             'photo'         =>  'mimes:jpg,png|image',
             'is_admin'      =>  'boolean|numeric|min:0|max:1',
-            // 'photo'         =>  ['required', File::image()->min(1024)->max(12 * 1024)->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),],
         ];
     }
 }
