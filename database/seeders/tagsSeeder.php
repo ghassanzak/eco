@@ -24,7 +24,7 @@ class tagsSeeder extends Seeder
         Tag::create(['name' => 'Food']);
         Tag::create(['name' => 'Travel']);
 
-        Tag::factory()->count(2000)->create();
+        Tag::factory()->count(10)->create();
 
 
         for ($i=1; $i <= 250; $i++) { 

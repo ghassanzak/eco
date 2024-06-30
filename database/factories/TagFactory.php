@@ -17,7 +17,7 @@ class TagFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->lastName,
+            'name' => fake()->unique()->lexify('Tag ????'),
         ];
     }
 }

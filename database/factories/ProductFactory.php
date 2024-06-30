@@ -21,7 +21,7 @@ class ProductFactory extends Factory
         $categories = collect(Category::all()->modelKeys());
         $user = collect(User::where('id', '>', 1)->get()->modelKeys());
         return [
-            'name'                  => fake()->lexify('category-?????'),
+            'name'                  => fake()->unique()->lexify('Product ????? ????'),
             'slug'                  =>  fake()->slug(),
             'description'           => fake()->paragraph(),
             'current_purchase_cost' =>fake()->randomFloat(1, 20, 30),

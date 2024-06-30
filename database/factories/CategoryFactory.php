@@ -17,7 +17,7 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'=>fake()->lastName(),
+            'name'=>fake()->unique()->lexify('Category ?????'),
             'is_popular'=>rand(0,1),
             'status'=>rand(0,1),
         ];
