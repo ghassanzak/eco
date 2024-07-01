@@ -31,25 +31,29 @@ class ProductSoftdeleteController extends Controller
         $products = $products->orderBy($sort_by, $order_by);
         $products = $products->paginate($limit_by);
 
-        return ProductResource::collection($products);
+        if(!$products->count()>0) return $this->returnError('products archive not found',404);
+
+        $products = ProductResource::collection($products);
+        return $this->returnData('products', $products);
     }
 
     public function show(IdRequest $request)
     {
         $product = Product::onlyTrashed()->with(['images_product', 'category', 'user', 'reviews'])->where('id',$request->id)->first();
-        return new ProductResource($product);
+        if(!$product) return $this->returnError('product archive not found',404);
+        $product = new ProductResource($product);
+        return $this->returnData('product',$product);
     }
 
     public function restore(IdRequest $request)
     {
         $product = Product::withTrashed()->where('id',$request->id);
-
         if ($product) {
             $product->restore();
-            return response()->json(['error'=> false, 'message' => 'Product restore archive successfully'],200);
+            return $this->returnSuccess('Product restore archive successfully',200);
            
         }
-        return response()->json(['error'=> true, 'message' => 'Something was wrong'],200);
+        return $this->returnError('Something was wrong',200);
         
     }
 
@@ -66,9 +70,8 @@ class ProductSoftdeleteController extends Controller
             }
             $product->forceDelete();
 
-            return response()->json(['error'=> false, 'message' => 'Product deleted archive successfully'],200);
+            return $this->returnSuccess('Product deleted archive successfully',200);
         }
-
-        return response()->json(['error'=> true, 'message' => 'Something was wrong'],200);
+        return $this->returnError('product not found',404);
     }
 }

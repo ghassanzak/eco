@@ -35,12 +35,12 @@ class AdminController extends Controller
             $date['photo'] = $this->Image($request->file('photo'),$this->file_media);
         }
         if(isset($date)) $user = User::where('id',$request->id)->update($date);
-        else return response()->json(['error'=> false, 'message' => 'nothing update data'],200);
+        else return $this->returnSuccess('nothing update data',200);
 
         if ($user) {
-            return response()->json(['error'=> false, 'message' => 'Update Profile is User Successfully'],203);
+            return $this->returnSuccess('Update Profile is User Successfully',203);
         }
-        return response()->json(['error'=> true, 'message' => 'Unauthorized'],403);
+        return $this->returnError('Unauthorized',403);
     }
     public function deleteUser(IdRequest $request)
     {
@@ -48,8 +48,8 @@ class AdminController extends Controller
         if ($user) {
             $this->removeImage($user->photo);
             if(auth()->user()->is_admin == 1) $user->delete();
-            return response()->json(['error'=> false, 'message' => 'User deleted successfully'],200);
+            return $this->returnSuccess('User deleted successfully',200);
         }
-        return response()->json(['error'=> true, 'message' => 'Something was wrong'],200);
+        return $this->returnError('Something was wrong',200);
     }
 }

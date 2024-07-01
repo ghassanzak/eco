@@ -36,13 +36,13 @@ class ForgetPasswordController extends Controller
                             'created_at' => Carbon::now(),
                         ]
                     );
-                    return response()->json(['error'=> false, 'message' => 'Mail send successfully'],200);
+                    return $this->returnSuccess('Mail send successfully',200);
                 }
             } else {
-                return response()->json(['error'=> true, 'message' => 'user is not found!'],200);
+                return $this->returnError('user is not found!',200);
             }
         } catch (Exception $e) {
-            return response()->json(['error'=> true, 'message' => $e->getMessage()],200);
+            return $this->returnError($e->getMessage(),200);
         }
     }
 
@@ -53,9 +53,9 @@ class ForgetPasswordController extends Controller
             $user->password = Hash::make($request->input('password'));
             $user->save();
             $resetData = PasswordResetTokens::where('key',$request->key)->where('email',$request->email)->delete();
-            return response()->json(['error'=> false, 'message' => 'Change Password Successfully'],200);
+            return $this->returnSuccess('Change Password Successfully',200);
         }else {
-            return response()->json(['error'=> true, 'message' => 'Page 404'],404);
+            return $this->returnError('Page 404',404);
         }
     }
 

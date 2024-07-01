@@ -44,16 +44,17 @@ class ProductController extends Controller
         $products = $products->orderBy($sort_by, $order_by);
         $products = $products->paginate($limit_by);
 
-        return ProductResource::collection($products);
+        $products = ProductResource::collection($products);
+        return $this->returnData('products',$products);
     }
 
     public function create()
     {
 
-        $tags = Tag::pluck('id', 'name');
-        $categories = Category::orderBy('id', 'desc')->pluck('id', 'name');
-        CategoryResource::collection($tags);
-        return ProductResource::collection($categories);
+        // $tags = Tag::pluck('id', 'name');
+        // $categories = Category::orderBy('id', 'desc')->pluck('id', 'name');
+        // CategoryResource::collection($tags);
+        // return ProductResource::collection($categories);
     }
 
     public function store(ProductRequest $request)
@@ -63,7 +64,12 @@ class ProductController extends Controller
         $data['current_sale_price']     = $request->current_sale_price;
         $data['available_quantity']     = $request->available_quantity;
         $data['description']            = Purify::clean($request->description);
-        $data['category_id']            = $request->category_id;
+        $category = Category::find($request->category_id);
+        if ($category) {
+            $data['category_id']        = $request->category_id;
+        }else{
+            return $this->returnError('id category not found',404);
+        }
 
         if (isset($request->code) && $request->code != null && $request->code != '') {
             $data['code']  = $request->code;
@@ -80,7 +86,7 @@ class ProductController extends Controller
         if (isset($request->status) && $request->status != null && $request->status != '') {
             $data['status']  = $request->status;
         }
-        // return response()->json(['error'=> false, 'message' => auth()->user()],200);
+        // return $this->returnSuccess(auth()->user(),200);
         $product = auth()->user()->products()->create($data);
 
         if ($request->images && count($request->images) > 0) {
@@ -103,26 +109,32 @@ class ProductController extends Controller
             $product->tags()->sync($new_tags);
         }
         if ($product) {
-            return response()->json(['error'=> false, 'message' => 'Product created successfully'],200);
+            return $this->returnSuccess('Product created successfully',200);
         } else {
-            return response()->json(['error'=> true, 'message' => 'worning'],200);
+            return $this->returnError('worning',200);
         }
     }
 
     public function show(IdRequest $request)
     {
         $product = Product::with(['images_product', 'category', 'user', 'reviews'])->where('id',$request->id)->first();
-        return new ProductResource($product);
+        if (!$product) {
+            return $this->returnError('id not found',404);
+        }
+        $product = new ProductResource($product);
+        return $this->returnData('product',$product);
     }
     public function edit($id)
     {
-        $tags = Tag::pluck( 'id','name');
-        $categories = Category::orderBy('id', 'desc')->pluck('id','name');
-        $product = Product::with(['images_product'])->where('id',$id)->first();
+        // $tags = Tag::pluck( 'id','name');
+        // $categories = Category::orderBy('id', 'desc')->pluck('id','name');
+        // $product = Product::with(['images_product'])->where('id',$id)->first();
 
-        TagResource::collection($tags);
-        CategoryResource::collection($categories);
-        return ProductResource::collection($product);
+        // // TagResource::collection($tags);
+        // // CategoryResource::collection($categories);
+        // $product = new ProductResource($product);
+        // return $this->returnData('product',$product);
+
     }
     public function update(ProductUpRequest $request)
     {
@@ -186,11 +198,10 @@ class ProductController extends Controller
                 $product->tags()->sync($new_tags);
             }
 
-            return response()->json(['error'=> false, 'message' => 'Product updated successfully'],200);
+            return $this->returnSuccess('Product updated successfully',200);
            
         }
-        return response()->json(['error'=> true, 'message' => 'Something was wrong'],200);
-        
+        return $this->returnError('id not found',404);
     }
 
     public function destroy(IdRequest $request)
@@ -198,9 +209,9 @@ class ProductController extends Controller
         $product = Product::where('id',$request->id)->first();
         if ($product) {
             $product->delete();
-            return response()->json(['error'=> false, 'message' => 'Product deleted successfully'],200);
+            return $this->returnSuccess('Product deleted successfully',200);
         }
-        return response()->json(['error'=> true, 'message' => 'Something was wrong'],200);
+        return $this->returnError('id not found',404);
     }
 
     public function removeImageForProduct(IdRequest $request)
@@ -209,8 +220,8 @@ class ProductController extends Controller
         if ($media) {
             $this->removeImage($media->name);
             $media->delete();
-            return true;
+            return 'true';
         }
-        return false;
+        return 'false';
     }
 }

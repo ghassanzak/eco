@@ -21,8 +21,6 @@ class TagUpRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        return ['name' => 'required','id'=>'required|numeric'];
     }
 }

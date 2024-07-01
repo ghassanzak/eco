@@ -24,7 +24,7 @@ class AuthController extends Controller
     function login(LoginRequest $request) {
         $credentials = request(['email','password']);
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error'=> true, 'message' => 'Unauthorized'],200);
+            return $this->returnError('Unauthorized',200);
         }
         return $this->respondWithToken($token);
     }
@@ -33,7 +33,7 @@ class AuthController extends Controller
         $tokenOld = JWTAuth::getToken();
         if (!$token = auth('api')->refresh()) {
             JWTAuth::invalidate($tokenOld);
-            return response()->json(['error'=> true, 'message' => 'Unauthorized'],200);
+            return $this->returnError('Unauthorized',200);
         }
         return $this->respondWithToken($token);
     }
@@ -47,10 +47,10 @@ class AuthController extends Controller
             auth('api')->logout();
             // invalidate token
             JWTAuth::invalidate($tokenOld);
-            return response()->json(['error'=> false, 'message' => 'logout successfuly'],200);
+            return $this->returnSuccess('logout successfuly',200);
             
         } catch (\Exception $e) {
-            return response()->json(['error'=> false, 'message' => $e->getMessage()],200);
+            return $this->returnSuccess($e->getMessage(),200);
             
         }
         
@@ -72,7 +72,7 @@ class AuthController extends Controller
         $user = User::create($date);
 
         if (!$token = auth('api')->login($user)) {
-            return response()->json(['error'=> true, 'message' => 'Unauthorized'],200);
+            return $this->returnError('Unauthorized',200);
         }
         return $this->respondWithToken($token);
     }

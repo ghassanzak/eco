@@ -16,10 +16,10 @@ class UserController extends Controller
         $hasPass=  Hash::make($request->newPass);
         $checkCurrentPass=Hash::check($request->currentPass, auth('api')->user()->password);
         if(!$checkCurrentPass){
-            return response()->json(['error'=> true, 'message' => 'The current password is incorrect'],200);
+            return $this->returnError('The current password is incorrect',200);
         }
         User::where('email',auth('api')->user()->email)->update(['password'=>$hasPass]);
-        return response()->json(['error'=> false, 'message' => 'Password Successfully Changed'],200);
+        return $this->returnSuccess('Password Successfully Changed',200);
     }
     public function updateProfile(UpdateInfoRequest $request){
         if(isset($request->first_name))    $date['first_name']    =  $request->first_name;
@@ -46,11 +46,11 @@ class UserController extends Controller
             $date['photo'] = $this->Image($request->file('photo'),$this->file_media);
         }
         if(isset($date)) $user = User::where('id',auth()->user()->id)->update($date);
-        else return response()->json(['error'=> false, 'message' => 'nothing update data'],200);
+        else return $this->returnSuccess('nothing update data',200);
 
         if ($user) {
-            return response()->json(['error'=> false, 'message' => 'Update Profile Successfully'],203);
+            return $this->returnSuccess('Update Profile Successfully',203);
         }
-        return response()->json(['error'=> true, 'message' => 'Unauthorized'],403);
+        return $this->returnError('Unauthorized',403);
     }
 }

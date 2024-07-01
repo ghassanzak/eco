@@ -19,7 +19,8 @@ class GeneralController extends Controller
         })
         ->active()->orderBy('id', 'asc')->paginate(5);
         if($product->count() > 0){
-            return ProductResource::collection($product);
+            $product = ProductResource::collection($product);
+            return $this->returnData('$product',$product);
         } else {
             return response()->json(['error' => true, 'message'=> 'No product Found'], 201);
         }
@@ -31,7 +32,8 @@ class GeneralController extends Controller
         ->active()->orderBy('id', 'desc')->paginate(5);
 
         if($category->count() > 0){
-            return CategoryResource::collection($category);
+            $category = CategoryResource::collection($category);
+            return $this->returnData('categorise',$category);
         } else {
             return response()->json(['error' => true, 'message'=> 'No category Found'], 201);
         }
@@ -85,7 +87,8 @@ class GeneralController extends Controller
         $product = $product->active()->first();
 
         if($product->count() > 0) {
-            return ReviewResource::collection($product->reviews);
+            $reviews = ReviewResource::collection($product->reviews);
+            return $this->returnData('$reviews',$reviews);
         } else {
             return response()->json(['error' => true, 'message'=> 'No reviews Found'], 201);
         }

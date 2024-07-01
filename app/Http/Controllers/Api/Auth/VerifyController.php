@@ -28,19 +28,19 @@ class VerifyController extends Controller
                 $user->notify(new sendCodeNotification($data));
                 $user->remember_token = $data['key'];
                 $user->save();
-                return response()->json(['error'=> false, 'message' => 'Mail send successfully'],200);
+                return $this->returnSuccess('Mail send successfully',200);
             } else {
-                return response()->json(['error'=> true, 'message' => 'user is not found!'],200);
+                return $this->returnError('user is not found!',200);
             }
         } else {
-            return response()->json(['error'=> true, 'message' => 'user is not Authentication'],200);
+            return $this->returnError('user is not Authentication',200);
         }
     }
 
     function verificationMail(Request $request) {
 
         $validator = Validator::make($request->all(),['key' => 'required|numeric|min:99999|max:99999999'],);
-        if ($validator->failed()) return response()->json(['error'=> true, 'message' => $validator->errors()],200);
+        if ($validator->failed()) return $this->returnError($validator->errors(),200);
 
         if (auth()->check()) {
             $user = User::where('remember_token', $request->input('key'))->where('email',auth()->user()->email)->first();
@@ -51,12 +51,12 @@ class VerifyController extends Controller
                 $user->email_verified_at = $datetime;
                 $user->save();
             }else{
-                return response()->json(['error'=> true, 'message' => 'The entrance code is not valid'],200);
+                return $this->returnError('The entrance code is not valid',200);
             }
     
-            return response()->json(['error'=> false, 'message' => 'Email verified successfully.'],200);
+            return $this->returnSuccess('Email verified successfully.',200);
         } else {
-            return response()->json(['error'=> true, 'message' => 'user is not Authentication'],200);
+            return $this->returnError('user is not Authentication',200);
         }
 
     }

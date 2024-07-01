@@ -18,13 +18,16 @@ class CategoryController extends Controller
     public function index()
     {
         $category = Category::get();
-        return  CategoryResource::collection($category);
+        
+        $category = CategoryResource::collection($category);
+        return $this->returnData('categorise',$category);
     }
 
     public function show(IdRequest $request)
     {
         $category = Category::where('id',$request->id)->get();
-        return CategoryResource::collection($category);
+        $category = CategoryResource::collection($category);
+        return $this->returnData('categorise',$category);
     }
 
     public function store(CategoryRequest $request)
@@ -39,15 +42,18 @@ class CategoryController extends Controller
         }
         $category->save();
         if ($category ) {
-            return response()->json(['error'=> false, 'message' => 'Ccategory created successfully']);
+            return $this->returnSuccess('Ccategory created successfully');
         } else {
-            return response()->json(['error'=> true, 'message' => 'worning']);
+            return $this->returnError('Something was wrong',200);
         }
     }
 
     public function update(CategoryUpRequest $request)
     {
         $category = Category::find($request->id);
+        if (!$category) {
+            return $this->returnError('id not found',404);
+        }
         $category->name     = $request->name;
         $category->status   = $request->status;
         $category->note     = $request->note;
@@ -59,14 +65,17 @@ class CategoryController extends Controller
             $category->is_popular = $request->is_popular;
         }
         $category->save();
-        return response()->json(['error'=> false, 'message' => 'Category Successfully Updated']);
+        return $this->returnSuccess('Category Successfully Updated');
     }
     public function destroy(IdRequest $request){
         $category = Category::find($request->id);
+        if (!$category) {
+            return $this->returnError('id not found',404);
+        }
         if (file_exists($category->image)) {
             unlink($category->image);
         }
         $category->delete();
-        return response()->json(['error'=> false, 'message' => 'category Successfully Deleted']);
+        return $this->returnSuccess('category Successfully Deleted');
     }
 }

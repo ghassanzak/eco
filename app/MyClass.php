@@ -4,11 +4,27 @@ namespace App;
 
 trait MyClass
 {
-    public  function Json(Bool $error,$msg,int $numError = null){
-        if ($numError==null) {
-            return response()->json(['error' => $error,'message' => $msg]);
-        }
-        return response()->json(['error' => $error,'message' => $msg],$numError);
+    public function returnError($msg, $errNum)
+    {
+        return response()->json([
+            'error' => true,
+            'msg' => $msg
+        ],$errNum);
+    }
+    public function returnSuccess($msg = "", $sucNum = "200")
+    {
+        return response()->json([
+            'error' => false,
+            'msg' => $msg
+        ],$sucNum);
+    }
+    public function returnData($key, $value, $msg = "", $sucNum = "200")
+    {
+        return response()->json([
+            'error' => false,
+            'msg' => $msg,
+            $key => $value
+        ],$sucNum);
     }
 
     public  function Image($image ,string $path){
