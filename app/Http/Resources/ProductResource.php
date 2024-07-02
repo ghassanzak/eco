@@ -33,7 +33,7 @@ class ProductResource extends JsonResource
             'is_trending' => $this->is_trending,
             'status' =>  $this->status(),
             'tags' =>  TagResource::collection($this->tags),
-            'reviews' => ReviewResource::collection($this->reviews),
+            'reviews' => $reviewResource,
             'reviews_count' => $reviewCount,
         ];
     }

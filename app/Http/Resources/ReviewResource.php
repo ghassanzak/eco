@@ -20,8 +20,8 @@ class ReviewResource extends JsonResource
             'product_review_details' =>$this->product_review_details,
             'ip_address' =>$this->ip_address,
             'status' =>$this->status,
-            'product_id' =>$this->product->id,
-            'user_id' =>$this->user->id,
+            // 'product_id' =>$this->product->id,
+            // 'user_id' =>$this->user->id,
         ];
     }
 }

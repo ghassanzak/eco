@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Category extends Model
 {
     use HasFactory;
+    use SearchableTrait;
 
     protected $table = 'categories';
     protected $fillable = [
@@ -17,6 +19,13 @@ class Category extends Model
         'status',
         'is_popular',
     ];
+    protected $searchable = [
+        'columns' => [
+            'categories.name' => 10,
+            'categories.note' => 10,
+        ],
+    ];
+
 
     public function products()
     {

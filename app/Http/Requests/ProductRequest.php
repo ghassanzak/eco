@@ -31,7 +31,7 @@ class ProductRequest extends FormRequest
             'description'               => 'required|min:20|string',
             'is_popular'                => 'nullable|numeric|min:0|max:1',
             'is_trending'               => 'nullable|numeric|min:0|max:1',
-            'status'                    => 'nullable|numeric|min:0|max:1',
+            'status'                    => 'required|numeric|min:0|max:1',
             'category_id'               => 'required',
             'images.*'                  => 'nullable|mimes:jpg,jpeg,png,gif',
             'tags.*'                    => 'required',

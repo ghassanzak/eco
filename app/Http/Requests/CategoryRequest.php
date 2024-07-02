@@ -23,7 +23,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name'                  => 'required|string',
-            'status'                => 'nullable|numeric|min:0|max:1',
+            'status'                => 'required|numeric|min:0|max:1',
             'note'                  => 'nullable|min:20|string',
             'image'                 => 'nullable|mimes:jpg,jpeg,png,gif',
         ];

@@ -28,11 +28,9 @@ class TagController extends Controller
 
         $tags = $tags->orderBy($sort_by, $order_by);
         $tags = $tags->paginate($limit_by);
-        if (!$tags->count()>0) {
-            return $this->returnError('tags not found',404);
-        }
+        if (!$tags->count()>0) return $this->returnData('data',[], 'Invalid Tag',200);
         $tags = TagResource::collection($tags);
-        return $this->returnData('tags',$tags,'tags');
+        return $this->returnData('data',$tags,'Index Tag');
     }
 
     public function create()
@@ -54,9 +52,9 @@ class TagController extends Controller
     public function show(IdRequest $request)
     {
         $tag = Tag::where('id',$request->id)->first();
-        if(!$tag) return $this->returnError('id not found',404);
+        if (!$tag) return $this->returnData('data',[], 'Invalid Tag',200);
         $tag = new TagResource($tag);
-        return $this->returnData('tag',$tag);
+        return $this->returnData('data',$tag,'Show Tag',200);
     }
 
     public function edit($id)
@@ -67,27 +65,18 @@ class TagController extends Controller
     public function update(TagUpRequest $request)
     {
         $tag = Tag::where('id',$request->id)->first();
-
-        if ($tag) {
-            $data['name']               = $request->name;
-            $data['slug']               = null;
-
-            $tag->update($data);
-
-            return $this->returnSuccess('Tag updated successfully',200);
-
-        }
-        return $this->returnError('id not found',404);
+        if (!$tag) return $this->returnSuccess('Invalid Tag',404);
+        $data['name']               = $request->name;
+        $data['slug']               = null;
+        $tag->update($data);
+        return $this->returnSuccess('Tag updated successfully',200);
     }
 
     public function destroy(IdRequest $request)
     {
         $tag = Tag::whereId($request->id)->first();
-        if ($tag) {
-            $tag->delete();
-            return $this->returnSuccess('Tag deleted successfully',200);
-        }
-        return $this->returnError('id not found',404);
-        
+        if (!$tag) return $this->returnSuccess('Invalid Tag',200);
+        $tag->delete();
+        return $this->returnSuccess('Tag deleted successfully',200);
     }
 }

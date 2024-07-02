@@ -44,11 +44,8 @@ class Product extends Model
         'columns' => [
             'products.name' => 10,
             'products.description' => 10,
-            
         ],
-        // 'joins' => [
-        //     'products' => ['products.id','products.user_id'],
-        // ],
+        
     ];
 
 

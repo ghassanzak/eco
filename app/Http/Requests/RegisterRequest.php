@@ -21,6 +21,24 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
+        if (auth()->check()) {
+            if (auth()->user()->is_admin()) {
+                return [
+                    'first_name'    =>  'required|string|max:255',
+                    'last_name'     =>  'required|string|max:255',
+                    'phone_one'     =>  'required|numeric|min:99999|max:9999999999',
+                    'email'         =>  'required|string|email|max:255|unique:users,email',
+                    'password'      =>  'required|string|min:6',
+                    'address'       =>  'required|string|max:255',
+                    'status'        =>  'required|boolean|numeric|min:0|max:1',
+                    'is_admin'      =>  'required|boolean|numeric|min:0|max:1',
+                    'phone_two'     =>  'numeric|min:99999|max:9999999999',
+                    'photo'         =>  'mimes:jpg,png|image',
+                    // 'photo'         =>  ['required', File::image()->min(1024)->max(12 * 1024)->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),],
+                ];
+                
+            }
+        }
         return [
             'first_name'    =>  'required|string|max:255',
             'last_name'     =>  'required|string|max:255',
@@ -31,8 +49,8 @@ class RegisterRequest extends FormRequest
             'photo'         =>  'mimes:jpg,png|image',
             'address'       =>  'string|max:255',
             // 'photo'         =>  ['required', File::image()->min(1024)->max(12 * 1024)->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500)),],
-            'status'        =>  'boolean|numeric|min:0|max:1',
-            'is_admin'      =>  'boolean|numeric|min:0|max:1',
+            // 'status'        =>  'boolean|numeric|min:0|max:1',
+            // 'is_admin'      =>  'boolean|numeric|min:0|max:1',
         ];
     }
 }

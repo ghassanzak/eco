@@ -22,21 +22,23 @@ Route::post('register',                     [AuthController::class, 'register'])
 Route::post('forget-password',      [ForgetPasswordController::class, 'forgetPassword']);
 Route::post('reset-password',       [ForgetPasswordController::class, 'resetPasswordLoad']);
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['jwt-auth']], function () {
     Route::get('me',                        [AuthController::class, 'me']);
     Route::post('refresh',                  [AuthController::class, 'refresh']);
     Route::post('logout',                   [AuthController::class,'logout']);
     Route::post('user/updateProfile',       [UserController::class,'updateProfile']);
-    Route::post('user/changePassword',      [UserController::class, 'changePassword']);
-
+    
     Route::post('send-code-mail-verify',    [VerifyController::class, 'sendCodeMail']);
     Route::post('/verify-mail',             [VerifyController::class, 'verificationMail']);
-
+    
+    Route::post('user/add-user',            [AdminController::class, 'addUser']);
+    Route::post('user/show-user',           [AdminController::class, 'showUser']);
     Route::post('user/update-user',         [AdminController::class, 'updateUser']);
     Route::post('user/delete-user',         [AdminController::class, 'deleteUser']);
+    Route::post('user/changePassword',      [UserController::class, 'changePassword']);
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['jwt-auth']], function () {
 
 Route::post('/user/tag/index',     [TagController::class,'index']);
     Route::post('/user/tag/store',     [TagController::class,'store']);

@@ -31,29 +31,29 @@ class ProductSoftdeleteController extends Controller
         $products = $products->orderBy($sort_by, $order_by);
         $products = $products->paginate($limit_by);
 
-        if(!$products->count()>0) return $this->returnError('products archive not found',404);
+        if(!$products->count()>0) return $this->returnData('Invalid Product Archive',404);
 
         $products = ProductResource::collection($products);
-        return $this->returnData('products', $products);
+        return $this->returnData('data', $products, 'Index Archive Product');
     }
 
     public function show(IdRequest $request)
     {
         $product = Product::onlyTrashed()->with(['images_product', 'category', 'user', 'reviews'])->where('id',$request->id)->first();
-        if(!$product) return $this->returnError('product archive not found',404);
+        if(!$product) return $this->returnData('data',[],'Invalid Product Archive',200);
         $product = new ProductResource($product);
-        return $this->returnData('product',$product);
+        return $this->returnData('data',$product,'Show Product Archive',200);
     }
 
     public function restore(IdRequest $request)
     {
-        $product = Product::withTrashed()->where('id',$request->id);
+        $product = Product::withTrashed()->where('id',$request->id)->first();
         if ($product) {
             $product->restore();
             return $this->returnSuccess('Product restore archive successfully',200);
            
         }
-        return $this->returnError('Something was wrong',200);
+        return $this->returnError('Invalid Product Archive',200);
         
     }
 
@@ -70,8 +70,8 @@ class ProductSoftdeleteController extends Controller
             }
             $product->forceDelete();
 
-            return $this->returnSuccess('Product deleted archive successfully',200);
+            return $this->returnSuccess('Product Deleted Archive Successfully',200);
         }
-        return $this->returnError('product not found',404);
+        return $this->returnError('Invalid Product Archive',404);
     }
 }

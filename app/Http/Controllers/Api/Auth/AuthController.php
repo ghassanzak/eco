@@ -7,6 +7,7 @@ use App\Http\Requests\ChangePassRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateInfoRequest;
+use App\Http\Resources\UserInfoResourse;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -24,22 +25,18 @@ class AuthController extends Controller
     function login(LoginRequest $request) {
         $credentials = request(['email','password']);
         if (!$token = auth('api')->attempt($credentials)) {
-            return $this->returnError('Unauthorized',200);
+            return $this->returnError('An error in the entered data',404);
         }
-        return $this->respondWithToken($token);
+        return $this->returnData('data',$this->respondWithToken($token),auth()->user()->is_admin==1?'Type User(admin)':'Type User(not admin)') ;
     }
     public function refresh()
-    {   
-        $tokenOld = JWTAuth::getToken();
-        if (!$token = auth('api')->refresh()) {
-            JWTAuth::invalidate($tokenOld);
-            return $this->returnError('Unauthorized',200);
-        }
-        return $this->respondWithToken($token);
+    {
+        return $this->refreshToken();
     }
     public function me()
     {
-        return response()->json(auth('api')->user());
+        $user = new UserInfoResourse(auth('api')->user());
+        return $this->returnSuccess($user,200);
     }
     function logout() {
         $tokenOld = JWTAuth::getToken();
@@ -49,9 +46,9 @@ class AuthController extends Controller
             JWTAuth::invalidate($tokenOld);
             return $this->returnSuccess('logout successfuly',200);
             
-        } catch (\Exception $e) {
-            return $this->returnSuccess($e->getMessage(),200);
+        } catch (\Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException $e) {
             
+            return $this->returnError($e->getMessage(),404);
         }
         
     }
@@ -63,26 +60,18 @@ class AuthController extends Controller
         $date['email']         =  $request->email;
         $date['address']       =  $request->address;
         $date['password']      = Hash::make($request->password);
-        $date['status']        =  $request->status;
-        $date['is_admin']      =  $request->is_admin;
+        $date['status']        =  1;
+        $date['is_admin']      =  0;
 
         if (isset($request->photo)) {
-            $date['photo'] = $this->Image($request->file('image'),$this->file_media);
+            $date['photo'] = $this->Image($request->file('photo'),$this->file_media);
         }
         $user = User::create($date);
 
         if (!$token = auth('api')->login($user)) {
-            return $this->returnError('Unauthorized',200);
+            return $this->returnError('An error in the entered data',200);
         }
-        return $this->respondWithToken($token);
-    }
-    
-    function respondWithToken($token) {
-        return response()->json([
-            'error'=> false,
-            'access_token'=>$token,
-            'expire_in' =>auth('api')->factory()->getTTL()*3600*70,
-        ]);
+        return $this->returnData('data',$this->respondWithToken($token),auth()->user()->is_admin==1?'Type User(admin)':'Type User(not admin)');
     }
 
 }

@@ -27,26 +27,17 @@ class UserController extends Controller
         if(isset($request->phone_one))     $date['phone_one']     =  $request->phone_one;
         if(isset($request->phone_two))    $date['phone_two']     =  $request->phone_two;
         if(isset($request->address))       $date['address']       =  $request->address;
-        if(isset($request->status))        $date['status']        =  $request->status;
-
 
         if(isset($request->email)){
             $date['email']              =  $request->email;
             $date['email_verified_at']  =  null;
         }
-        // dd($request->is_admin);
-        if(isset($request->is_admin)){
-            if(auth()->user()->is_admin == 1){
-                $date['is_admin']  =  $request->is_admin;
-            }
-        } 
-
         if (isset($request->photo)) {
             $this->removeImage(auth()->user()->photo);
             $date['photo'] = $this->Image($request->file('photo'),$this->file_media);
         }
         if(isset($date)) $user = User::where('id',auth()->user()->id)->update($date);
-        else return $this->returnSuccess('nothing update data',200);
+        else return $this->returnError('There is no new data',404);
 
         if ($user) {
             return $this->returnSuccess('Update Profile Successfully',203);

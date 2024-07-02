@@ -1,0 +1,100 @@
+1. Invalid Username or Password
+2. Account Not Found
+3. Session Expired
+4. Invalid Email Address
+5. Invalid Phone Number
+6. Access Denied
+7. Account Already Exists
+8. Insufficient Permissions
+9. Payment Failed
+10. Technical Error
+11. Server Error
+12. Internal Server Error
+13. Invalid Input
+14. Action Cannot Be Completed
+15. Unauthorized Access
+16. Invalid Token
+17. Email Already Exists
+18. Phone Number Already Exists
+19. Account Locked
+20. Invalid Captcha
+21. Account Suspended
+22. Service Temporarily Unavailable
+23. Out of Stock
+24. Username Already Exists
+25. Email Not Verified
+26. Invalid Credentials
+27. Invalid Address
+28. Invalid Credit Card Information
+29. Order Not Found
+30. Order Cancellation Failed
+31. Order Placed Successfully
+32. Invalid Coupon Code
+33. Invalid Shipping Method
+34. Email Delivery Failed
+35. Password Reset Failed
+36. Invalid File Type
+37. File Upload Failed
+38. Invalid URL
+39. Page Not Found
+40. Duplicate Entry Found
+41. Invalid Query
+42. Invalid Request
+43. Database Error
+44. Invalid Currency
+45. Payment Not Processed
+46. Invalid Login Attempt
+47. Invalid Character Found
+48. Invalid Date Format
+49. Invalid Time Format
+50. Invalid Time Zone
+51. Invalid Password Policy
+52. Invalid Security Question
+53. Invalid Security Answer
+54. Invalid API Key
+55. Invalid API Request
+56. Invalid API Response
+57. Invalid Data Format
+58. Invalid Encryption Key
+59. Invalid Hash Algorithm
+60. Invalid Signature
+61. Invalid Certificate
+62. Invalid SSL Connection
+63. Invalid Content Type
+64. Invalid HTTP Method
+65. Database Connection Error
+66. Invalid Credit Card Number
+67. Invalid CVV Number
+68. Invalid Expiration Date
+69. Invalid Shipping Address
+70. Invalid Billing Address
+71. Invalid Product ID
+72. Invalid Product Category
+73. Invalid Product Description
+74. Invalid Product Price
+75. Invalid Product Image
+76. Invalid Product Quantity
+77. Invalid Product Weight
+78. Invalid Product Dimensions
+79. Invalid Product Variant
+80. Invalid Product Option
+81. Invalid Product Size
+82. Invalid Product Color
+83. Invalid Product Brand
+84. Invalid Product Rating
+85. Invalid Product Reviews
+86. Product Out of Stock
+87. Product Discontinued
+88. Product Not Yet Released
+89. Invalid Order Status
+90. Invalid Shipping Status
+91. Invalid Billing Status
+92. Invalid Refund Request
+93. Invalid Return Request
+94. Invalid Warranty Claim
+95. Invalid Support Ticket
+96. Invalid FAQ
+97. Invalid Privacy Policy
+98. Invalid Terms and Conditions
+99. Invalid GDPR Compliance
+100. Invalid Accessibility Statement

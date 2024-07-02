@@ -2,8 +2,31 @@
 
 namespace App;
 
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 trait MyClass
 {
+    public function filter($request) {
+        $keyword = (isset($request->keyword) && $request->keyword != '') ? $request->keyword : null;
+        $status = (isset($request->status) && $request->status != '') ? $request->status : null;
+        $sort_by = (isset($request->sort_by) && $request->sort_by != '') ? $request->sort_by : 'id';
+        $order_by = (isset($request->order_by) && $request->order_by != '') ? $request->order_by : 'desc';
+        $limit_by = (isset($request->limit_by) && $request->limit_by != '') ? $request->limit_by : '10';
+    }
+    public function refreshToken() {
+        $tokenOld = JWTAuth::getToken();
+        if (!$token = auth('api')->refresh()) {
+            JWTAuth::invalidate($tokenOld);
+            $this->returnError('Unauthorized',200);
+        }
+        return $this->returnData('data',$this->respondWithToken($token),auth()->user()->is_admin==1?'Type User(admin) - Refresh Token':'Type User(not admin) - Refresh Token');
+    }
+    function respondWithToken($token) {
+        return[
+            'access_token'=>$token,
+            'expire_in' =>auth('api')->factory()->getTTL()*3600*70,
+        ];
+    }
     public function returnError($msg, $errNum)
     {
         return response()->json([
